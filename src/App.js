@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Route, Switch, Redirect } from "react-router-dom";
 import LandingContainer from "./containers/LandingContainer";
-import PagesContainer from "./containers/PagesContainer";
+import PagesContainer from "./containers/pages/PagesContainer";
 import NavBar from "./nav/NavBar";
 
 import "./App.css";
@@ -9,8 +9,9 @@ import "./App.css";
 class App extends Component {
   state = {
     isLoading: true,
-    isLoggedIn: false
-  };
+    isLoggedIn: false,
+    pages: []
+  }
 
   componentDidMount() {
     window.fbAsyncInit = function() {
@@ -55,7 +56,7 @@ class App extends Component {
     }
     this.setState({
       isLoggedIn,
-      isLoading: false
+      isLoading: false,
     });
   };
 
@@ -63,7 +64,7 @@ class App extends Component {
     window.FB.login(
       function(response) {
         this.statusChangeCallback(response);
-      },
+      }.bind(this),
       {
         scope: "manage_pages,pages_show_list,publish_pages,public_profile",
         return_scopes: true
@@ -72,9 +73,11 @@ class App extends Component {
   };
 
   logout = () => {
-    window.FB.logout(function(response) {
-      this.statusChangeCallback(response);
-    });
+    window.FB.logout(
+      function(response) {
+        this.statusChangeCallback(response);
+      }.bind(this)
+    );
   };
 
   render() {
@@ -90,11 +93,11 @@ class App extends Component {
               isLoggedIn ? <Redirect to="/pages" /> : <LandingContainer />}
           />
           <Route
-            exact
             path="/pages"
             render={() =>
               isLoggedIn ? <PagesContainer /> : <Redirect to="/" />}
           />
+          
           <Route render={({ location }) => <Redirect to="/" />} />
         </Switch>
       </div>
