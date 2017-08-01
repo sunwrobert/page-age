@@ -8,14 +8,14 @@ class Page extends Component {
 
   render() {
     return (
-      <div>
+      <div className="page">
         <Link to={`/pages/${this.props.id}`}>
-          <h2>
+          <div className="page--title">
             {this.props.name}
-          </h2>
-          <p>
-            category: {this.props.category}
-          </p>
+          </div>
+          <div className="page--category">
+            {this.props.category}
+          </div>
         </Link>
       </div>
     );

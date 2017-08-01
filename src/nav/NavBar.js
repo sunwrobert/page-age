@@ -2,12 +2,12 @@ import React from "react";
 
 const NavBar = props =>
   <nav className="nav-bar">
-    <span>Page Age</span>
+    <div className="nav-bar--logo">Page Age</div>
     {props.isLoading
       ? ""
       : props.isLoggedIn
-        ? <button onClick={props.handleLogout}>Logout</button>
-        : <button onClick={props.handleLogin}>Login</button>}
+        ? <span className="auth-button" onClick={props.handleLogout}>Logout</span>
+        : <span className="auth-button" onClick={props.handleLogin}>Login</span>}
   </nav>;
 
 export default NavBar;

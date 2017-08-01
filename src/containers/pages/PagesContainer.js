@@ -10,12 +10,15 @@ class PagesContainer extends Component {
     this.state = {
       isLoading: true,
       isPostLoading: false,
-      pages: [],
-      posts: {}
+      pages: []
     };
   }
 
   componentDidMount() {
+    this.loadPages();
+  }
+
+  loadPages = () => {
     window.FB.api(
       "/me/accounts",
       function(response) {
@@ -23,22 +26,47 @@ class PagesContainer extends Component {
           pages: response.data,
           isLoading: false
         });
+        console.log(this.state.pages);
       }.bind(this)
     );
-  }
+  };
+
+  addPost = (pageId, post) => {
+    let newPages = this.state.pages.map(page => {
+      if (page.id === pageId) {
+        let newPosts = [post].concat(page.posts);
+        let newPage = Object.assign({}, page, {
+          posts: newPosts
+        });
+        return newPage;
+      }
+      return page;
+    });
+
+    this.setState({
+      pages: newPages
+    });
+  };
 
   loadPagePosts = pageId => {
     window.FB.api(
-      `${pageId}/feed`,
+      `${pageId}/promotable_posts`,
+      { fields: "created_time,message,is_published,scheduled_publish_time" },
       function(response) {
-        console.log(response, pageId);
-        let pages = this.state.pages.map(p => {
-          if (p.id === pageId) {
-            let newPage = Object.assign({}, p);
+        console.log(response);
+        let pages = this.state.pages.map(page => {
+          if (page.id === pageId) {
+            let newPage = Object.assign({}, page);
             newPage.posts = response.data;
+            newPage.posts.forEach(
+              function(post) {
+                let [pageId, postId] = post.id.split("_");
+                this.loadPostViews(pageId, postId);
+              }.bind(this)
+            );
             return newPage;
           }
-          return p;
+          return page;
         });
 
         this.setState({
@@ -47,21 +75,46 @@ class PagesContainer extends Component {
         });
       }.bind(this)
     );
-    console.log(this.state);
+  };
+
+  loadPostViews = (pageId, postId) => {
+    window.FB.api(
+      `${pageId}_${postId}/insights/post_impressions_unique`,
+      function(response) {
+        console.log("loading post views", response);
+      }
+    );
+  };
+
+  writePost = (pageId, message, isPublished) => {
+    let accessToken = this.state.pages.find(page => page.id === pageId)
+      .access_token;
+    window.FB.api(
+      `/${pageId}/feed?fields=created_time,id,message,is_published`,
+      "POST",
+      {
+        message: message,
+        published: isPublished,
+        access_token: accessToken
+      },
+      function(response) {
+        console.log(response);
+        if (response && !response.error) {
+          let post = response;
+          this.addPost(pageId, post);
+        }
+      }.bind(this)
+    );
   };
 
   render() {
     const isLoading = this.state.isLoading;
     return (
       <div>
-        <h1>Your Pages</h1>
         {isLoading
           ? <div className="spinner" />
-          : <div>
-              <PageList
-                pages={this.state.pages}
-                loadPagePosts={this.loadPagePosts}
-              />
+          : <div className="pages-container">
+              <PageList pages={this.state.pages} />
               <Route
                 path="/pages/:pageId"
                 render={({ match }) => {
@@ -75,6 +128,7 @@ class PagesContainer extends Component {
                       category={page.category}
                       posts={page.posts}
                       loadPagePosts={this.loadPagePosts}
+                      writePost={this.writePost}
                     />
                   );
                 }}

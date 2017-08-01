@@ -14,13 +14,13 @@ class PageList extends Component {
             id={page.id}
             name={page.name}
             category={page.category}
-            loadPagePosts={this.props.loadPagePosts}
           />
         );
       }.bind(this)
     );
     return (
-      <div>
+      <div className="page-list">
+        <div className="page-list--title">Your Pages</div>
         {pages}
       </div>
     );

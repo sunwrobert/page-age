@@ -1,9 +1,13 @@
 import React, { Component } from "react";
+import PostList from "./PostList";
+import WritePostForm from "./WritePostForm";
+import PostsContainer from "./PostsContainer";
+import { Route, Redirect } from "react-router-dom";
 
 class PageDetail extends Component {
-  constructor(props) {
-    super(props);
-  }
+  state = {
+    isPublished: true
+  };
 
   componentDidMount() {
     this.loadPagePostsIfNeeded(this.props.posts, this.props.id);
@@ -22,22 +26,40 @@ class PageDetail extends Component {
     if (this.props.posts === undefined) {
       return <h1>Loading...</h1>;
     }
-    let posts = this.props.posts.map(function(post) {
-      return (
-        <div key={post.id}>
-          {post.message}
-        </div>
-      );
-    });
+    let posts = this.props.posts.filter(
+      post => post.is_published === this.state.isPublished
+    );
+    console.log(posts);
     return (
-      <div>
-        <h1>
-          {this.props.name}
-        </h1>
-        <p>
-          category: {this.props.category}
-        </p>
-        {posts.length === 0 ? <h1>You have no posts</h1> : posts}
+      <div className="page-detail">
+        <div className="page-detail--header">
+          <div className="page-detail--title">
+            {this.props.name}
+          </div>
+          <div className="page-detail--category">
+            {this.props.category}
+          </div>
+        </div>
+        
+        <div className="page-detail--post-type-container">
+          <div
+            className={(this.state.isPublished ? 'active page-detail--post-type' : 'page-detail--post-type')} 
+            onClick={() => this.setState({ isPublished: true })}>
+            Published Posts
+          </div>
+          <div
+            className={(!this.state.isPublished ? 'active page-detail--post-type' : ' page-detail--post-type')} 
+            onClick={() => this.setState({ isPublished: false })}
+          >
+            Unpublished Posts
+          </div>
+        </div>
+        <PostsContainer
+          id={this.props.id}
+          isPublished={this.state.isPublished}
+          posts={posts}
+          writePost={this.props.writePost}
+        />
       </div>
     );
   }

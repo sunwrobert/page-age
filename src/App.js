@@ -84,7 +84,7 @@ class App extends Component {
     const isLoggedIn = this.state.isLoggedIn;
     const isLoading = this.state.isLoading;
     const Routes = (
-      <div>
+      <div className="container">
         <Switch>
           <Route
             exact
@@ -97,7 +97,6 @@ class App extends Component {
             render={() =>
               isLoggedIn ? <PagesContainer /> : <Redirect to="/" />}
           />
-          
           <Route render={({ location }) => <Redirect to="/" />} />
         </Switch>
       </div>
