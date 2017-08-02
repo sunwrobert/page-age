@@ -12,7 +12,7 @@ class PostList extends Component {
     });
 
     return (
-      <div>
+      <div className="post-list--container">
         {posts.length === 0
           ? <h1>You have no posts</h1>
           : posts}

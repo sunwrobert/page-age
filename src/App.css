@@ -1,4 +1,4 @@
-body {
+* {
   font-family: 'Roboto', sans-serif;
   color: #333;
 }
@@ -36,6 +36,7 @@ body {
 
 .container {
   width: 100%;
+  max-width: 1600px;
   box-sizing: border-box;
   margin: 0 auto;
   padding: 0 80px;
@@ -81,6 +82,9 @@ body {
 
 .page {
   padding: 20px 0;
+}
+.page:hover {
+  color: #4183d7;
 }
 .page--title {
   font-size: 24px;
@@ -145,6 +149,80 @@ a:hover {
 .active {
   color: #4183d7;
 }
+
+.posts-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 50px;
+}
+
+.write-post--container {
+  width: 100%;
+  padding: 0px 74px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+.write-post--input {
+  margin: 0 auto;
+  resize: none;
+  padding: 17px;
+  border: 1px solid #e0e0e0;
+  outline: none;
+  height: 54px;
+  font-size: 18px;
+  letter-spacing: 1.1px;
+  color: black;
+  font-family: "Roboto", sans-serif;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.write-post--submit {
+  border: none;
+  background-color: #4183d7;
+  color: #fff;
+  height: 40px;
+  font-size: 18px;
+  border-radius: 2px;
+  cursor: pointer;
+  box-shadow: 1px;
+  transition: .2s;
+}
+.write-post--submit:hover {
+  background-color: #446cb3;
+}
+
+.post-list--container {
+  width: 100%;
+  margin-top: 50px;
+}
+
+.post-list--post {
+  padding: 15px 30px;
+  border-radius: 3px;
+  box-shadow: 0 0px 10px 0px rgba(65, 131, 215, 0.3);
+  margin: 10px 0;
+}
+.post-list--post-message {
+  margin: 15px 0;
+}
+.post-list--post-metadata-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.post-list--post-metadata {
+  font-size: 14px;
+  color: #757575;
+}
+
 /*
 Spinning loader classes
 */

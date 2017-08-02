@@ -81,8 +81,33 @@ class PagesContainer extends Component {
     window.FB.api(
       `${pageId}_${postId}/insights/post_impressions_unique`,
       function(response) {
-        console.log("loading post views", response);
-      }
+        let newPages = this.state.pages.map(page => {
+          if (page.id === pageId) {
+            let newPosts = page.posts.map(post => {
+              if (post.id === pageId + "_" + postId) {
+                console.log("adding views");
+                let newPost = Object.assign({}, post, {
+                  views:
+                    response.data === null || response.data.length === 0
+                      ? 0
+                      : response.data
+                });
+                return newPost;
+              }
+              return post;
+            });
+            let newPage = Object.assign({}, page, {
+              posts: newPosts
+            });
+            return newPage;
+          }
+          return page;
+        });
+
+        this.setState({
+          pages: newPages
+        });
+      }.bind(this)
     );
   };
 
