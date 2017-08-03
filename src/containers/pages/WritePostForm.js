@@ -8,6 +8,13 @@ class WritePostForm extends Component {
   componentDidMount(){
     autosize(document.querySelector('textarea'));
   }
+
+  componentWillReceiveProps(nextProps){
+    console.log('switched');
+    this.setState({
+      message: ''
+    });
+  }
   writePost = () => {
     this.props.writePost(
       this.props.id,
@@ -25,6 +32,7 @@ class WritePostForm extends Component {
         <textarea 
           className="write-post--input"
           onChange={e => this.setState({ message: e.target.value })}
+          value={this.state.message}
           placeholder="Write something..."
         />
         {this.props.isPublished

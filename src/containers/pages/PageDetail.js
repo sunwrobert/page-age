@@ -12,6 +12,7 @@ class PageDetail extends Component {
   componentDidMount() {
     this.loadPagePostsIfNeeded(this.props.posts, this.props.id);
   }
+  
   componentWillReceiveProps(nextProps) {
     this.loadPagePostsIfNeeded(nextProps.posts, nextProps.id);
   }
@@ -24,12 +25,15 @@ class PageDetail extends Component {
 
   render() {
     if (this.props.posts === undefined) {
-      return <h1>Loading...</h1>;
+      return (
+      <div className="page-detail">
+        <div className="page-detail--loading">Loading...</div>
+      </div>
+      )
     }
     let posts = this.props.posts.filter(
       post => post.is_published === this.state.isPublished
     );
-    console.log(posts);
     return (
       <div className="page-detail">
         <div className="page-detail--header">

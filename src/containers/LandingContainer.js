@@ -4,8 +4,9 @@ class LandingContainer extends Component {
   render() {
     return (
       <div>
-        <h1>Page Age</h1>
-        <p>The new age of managing your pages</p>
+        <div className="landing-background"></div>
+        <div className="landing--title">Welcome to Page Age</div>
+        <div className="landing--welcome">The new way of managing your Facebook pages.</div>
       </div>
     );
   }
