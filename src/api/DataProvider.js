@@ -18,9 +18,16 @@ class DataProvider {
     return this.promiseHelper("/me/accounts");
   };
 
-  loadPagePosts = pageId => {
+  loadPublishedPagePosts = pageId => {
+    return this.promiseHelper(`${pageId}/feed`, "GET", {
+      fields: "created_time,message,is_published",
+    });
+  }
+
+  loadUnpublishedPagePosts = pageId => {
     return this.promiseHelper(`${pageId}/promotable_posts`, "GET", {
-      fields: "created_time,message,is_published,scheduled_publish_time"
+      fields: "created_time,message,is_published,scheduled_publish_time",
+      is_published: false
     });
   };
 

@@ -6,6 +6,22 @@ body {
 input {
   font-family: 'Roboto', sans-serif;
 }
+  
+.landing-background {
+  background: -webkit-linear-gradient(bottom left, #BBDEFB 30%, #4183d7 90%);
+  background: -moz-linear-gradient(bottom left, #BBDEFB 30%, #4183d7 90%);
+  background: -o-linear-gradient(bottom left, #BBDEFB 30%, #4183d7 90%);
+  background: linear-gradient(to top right, #7E57C2 30%, #4183d7 90%);
+  position: fixed;
+  width: 100vw;
+  height: 100%;
+  bottom: 25vh;
+  left: 0;
+  -webkit-transform: skewY(-5deg);
+  -ms-transform: skewY(-5deg);
+  transform: skewY(-5deg);
+  z-index: -1;
+}
 
 .landing--title {
   font-size: 60px;

@@ -49,29 +49,40 @@ class PagesContainer extends Component {
   };
 
   loadPagePosts = pageId => {
-    DataProvider.loadPagePosts(pageId)
-      .then(posts => {
-        let pages = this.state.pages.map(page => {
-          if (page.id === pageId) {
-            let newPage = Object.assign({}, page);
-            newPage.posts = posts;
-            newPage.posts.forEach(post => {
-              let [pageId, postId] = post.id.split("_");
-              this.loadPostViews(pageId, postId);
-            });
-            return newPage;
-          }
-          return page;
-        });
-
-        this.setState({
-          pages: pages,
-          isPostLoading: false
-        });
-      })
+    DataProvider.loadPublishedPagePosts(pageId)
+      .then(posts => this.updateStateFromPosts(pageId, posts))
       .catch(error => {
         this.showUnexpectedError(error);
+      })
+      .then(() => {
+        DataProvider.loadUnpublishedPagePosts(pageId)
+          .then(posts => this.updateStateFromPosts(pageId, posts))
+          .catch(error => {
+            this.showUnexpectedError(error);
+          });
       });
+  };
+
+  updateStateFromPosts = (pageId, posts) => {
+    console.log("updating state", posts);
+    let pages = this.state.pages.map(page => {
+      if (page.id === pageId) {
+        let newPage = Object.assign({}, page);
+        newPage.posts = newPage.posts ? newPage.posts.concat(posts) : posts;
+        newPage.posts = newPage.posts.filter(post => {
+          let [pageId, postId] = post.id.split("_");
+          this.loadPostViews(pageId, postId);
+          return post.message;
+        });
+        return newPage;
+      }
+      return page;
+    });
+    console.log(pages);
+    this.setState({
+      pages: pages,
+      isPostLoading: false
+    });
   };
 
   loadPostViews = (pageId, postId) => {
