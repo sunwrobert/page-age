@@ -3,7 +3,7 @@ class DataProvider {
     return new Promise((resolve, reject) => {
       window.FB.api(url, method, params, function(response) {
         if (response.error) {
-          reject(response.error.error_user_msg);
+          response.error.error_user_msg ? reject(response.error.error_user_msg) : reject(response.error.message);
         } else {
           if(response.data){
             resolve(response.data);
@@ -32,7 +32,7 @@ class DataProvider {
 
   writePost = (pageId, params) => {
     return this.promiseHelper(
-      `/${pageId}/feed?fields=created_time,id,message,is_published`,
+      `/${pageId}/feed?fields=created_time,id,message,is_published,scheduled_publish_time`,
       "POST",
       params
     );

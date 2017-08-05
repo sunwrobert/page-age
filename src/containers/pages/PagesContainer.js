@@ -123,6 +123,7 @@ class PagesContainer extends Component {
     DataProvider.writePost(pageId, data)
       .then(post => {
         this.showPostCreatedMessage();
+        console.log(post);
         this.addPost(pageId, post);
       })
       .catch(error => {

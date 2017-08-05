@@ -22,7 +22,6 @@ class WritePostForm extends Component {
         format: "MMMM Do YYYY, h:mm",
         minDate: new Date(),
         onSelect(date) {
-          console.log("test");
           that.updateScheduledTime(date);
         }
       });
@@ -69,8 +68,9 @@ class WritePostForm extends Component {
             <input
               id="schedule"
               type="checkbox"
+              checked={this.state.isScheduled}
               onChange={e => {
-                this.setState({ isScheduled: e.target.checked });
+                this.setState({ isScheduled: e.target.checked, scheduledTime: e.target.checked ? moment().unix() : 0 });
               }}
             />
             <label htmlFor="schedule">Schedule this post</label>

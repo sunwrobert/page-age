@@ -51,23 +51,33 @@ class App extends Component {
     })(document, "script", "facebook-jssdk");
   }
 
-  statusChangeCallback = (response, fromLogin) => {
+  statusChangeCallback = (response, fromLoginOrLogout) => {
     let isLoggedIn = false;
     console.log(response);
-    if(response.error){
+    if (response.error) {
       new Noty({
-          text: "There was an error logging in",
-          type: "error",
+        text: "There was an error logging in",
+        type: "error",
+        layout: "bottomCenter",
+        theme: "metroui",
+        timeout: 3000
+      }).show();
+    }
+    if (response.status === "connected") {
+      isLoggedIn = true;
+      if (fromLoginOrLogout) {
+        new Noty({
+          text: "Logged in successfully!",
+          type: "success",
           layout: "bottomCenter",
           theme: "metroui",
           timeout: 3000
         }).show();
-    }
-    if (response.status === "connected") {
-      isLoggedIn = true;
-      if (fromLogin) {
+      }
+    } else {
+      if (fromLoginOrLogout) {
         new Noty({
-          text: "Logged in successfully!",
+          text: "Logged out successfully!",
           type: "success",
           layout: "bottomCenter",
           theme: "metroui",
@@ -96,7 +106,7 @@ class App extends Component {
   logout = () => {
     window.FB.logout(
       function(response) {
-        this.statusChangeCallback(response);
+        this.statusChangeCallback(response, true);
       }.bind(this)
     );
   };
