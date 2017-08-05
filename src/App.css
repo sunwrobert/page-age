@@ -3,6 +3,10 @@ body {
   color: #333;
 }
 
+input {
+  font-family: 'Roboto', sans-serif;
+}
+
 .landing--title {
   font-size: 60px;
   font-weight: 300;
@@ -37,7 +41,6 @@ body {
 }
 
 .nav-bar--logo {
-  font-family: "Roboto", sans-serif;
   font-size: 52px;
   font-weight: 300;
   line-height: 60px;
@@ -53,23 +56,6 @@ body {
   margin: 0 auto;
   padding: 0 80px;
 }
-
-/*
-.landing-background {
-  background: -webkit-linear-gradient(bottom left, #BBDEFB 30%, #4183d7 90%);
-  background: -moz-linear-gradient(bottom left, #BBDEFB 30%, #4183d7 90%);
-  background: -o-linear-gradient(bottom left, #BBDEFB 30%, #4183d7 90%);
-  background: linear-gradient(to top right, #BBDEFB 30%, #4183d7 90%);
-  position: fixed;
-  width: 100vw;
-  height: 100%;
-  bottom: 25vh;
-  left: 0;
-  -webkit-transform: skewY(-5deg);
-  -ms-transform: skewY(-5deg);
-  transform: skewY(-5deg);
-  z-index: -1;
-}*/
 
 .pages-container {
   padding: 40px 0;
@@ -204,13 +190,13 @@ a:hover {
   font-size: 18px;
   letter-spacing: 1.1px;
   color: black;
-  font-family: "Roboto", sans-serif;
   -webkit-box-shadow: none;
   -moz-box-shadow: none;
   box-shadow: none;
   display: block;
   width: 100%;
   box-sizing: border-box;
+  font-family: "Roboto", sans-serif;
 }
 
 .write-post--submit {
@@ -254,6 +240,34 @@ a:hover {
 
 .page-detail--loading {
   font-size: 28px;
+  text-align: center;
+}
+
+.schedule--container {
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-left: 1px solid #e0e0e0;
+  border-right: 1px solid #e0e0e0;
+}
+
+.schedule-checkbox--container {
+  padding: 0 20px;
+}
+
+.schedule-datepicker {
+  flex-grow: 1;
+  height: 50px;
+  padding: 0 20px;
+  border: none;
+  border-left: 1px solid #e0e0e0;
+  font-size: 16px;
+}
+
+.post-list--no-posts {
+  font-size: 24px;
+  font-weight: 300;
   text-align: center;
 }
 /*

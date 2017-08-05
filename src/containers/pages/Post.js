@@ -1,8 +1,13 @@
 import React, { Component } from "react";
 import moment from "moment-timezone";
 class Post extends Component {
-  constructor(props) {
-    super(props);
+  // Force time to update
+  componentDidMount() {
+    this.forceUpdateInterval = setInterval(() => this.forceUpdate(), 1000);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.forceUpdateInterval);
   }
 
   render() {
@@ -10,8 +15,26 @@ class Post extends Component {
       this.props.views === undefined
         ? "Loading views..."
         : this.props.views + " views";
-    let formattedDate = moment.utc(this.props.date).fromNow();
-    console.log(formattedDate);
+
+    let formattedDateText;
+    // Subtract 30 seconds to account for differing time between client and server
+    if (this.props.isPublished) {
+      formattedDateText = `Posted ${moment
+        .utc(this.props.createdDate)
+        .subtract(30, "seconds")
+        .fromNow()}`;
+    } else if (this.props.scheduledDate) {
+      formattedDateText = `Scheduled to post ${moment
+        .unix(this.props.scheduledDate)
+        .subtract(30, "seconds")
+        .fromNow()}`;
+    } else {
+      formattedDateText = `Created ${moment
+        .utc(this.props.createdDate)
+        .subtract(30, "seconds")
+        .fromNow()}`;
+    }
+
     return (
       <div className="post-list--post">
         <div className="post-list--post-message">
@@ -19,7 +42,7 @@ class Post extends Component {
         </div>
         <div className="post-list--post-metadata-container">
           <div className="post-list--post-metadata">
-            Posted {formattedDate}
+            {formattedDateText}
           </div>
           <div className="post-list--post-metadata">
             {formattedViews}

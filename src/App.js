@@ -3,15 +3,18 @@ import { Route, Switch, Redirect } from "react-router-dom";
 import LandingContainer from "./containers/LandingContainer";
 import PagesContainer from "./containers/pages/PagesContainer";
 import NavBar from "./nav/NavBar";
+import Noty from "noty";
 
 import "./App.css";
+import "./lib/pikaday.css";
+import "./lib/noty.css";
 
 class App extends Component {
   state = {
     isLoading: true,
     isLoggedIn: false,
     pages: []
-  }
+  };
 
   componentDidMount() {
     window.fbAsyncInit = function() {
@@ -24,14 +27,14 @@ class App extends Component {
 
       FB.getLoginStatus(
         function(response) {
-          this.statusChangeCallback(response);
+          this.statusChangeCallback(response, false);
         }.bind(this)
       );
 
       FB.Event.subscribe(
         "auth.statusChange",
         function(response) {
-          this.statusChangeCallback(response);
+          this.statusChangeCallback(response, false);
         }.bind(this)
       );
     }.bind(this);
@@ -48,22 +51,40 @@ class App extends Component {
     })(document, "script", "facebook-jssdk");
   }
 
-  statusChangeCallback = response => {
+  statusChangeCallback = (response, fromLogin) => {
     let isLoggedIn = false;
     console.log(response);
+    if(response.error){
+      new Noty({
+          text: "There was an error logging in",
+          type: "error",
+          layout: "bottomCenter",
+          theme: "metroui",
+          timeout: 3000
+        }).show();
+    }
     if (response.status === "connected") {
       isLoggedIn = true;
+      if (fromLogin) {
+        new Noty({
+          text: "Logged in successfully!",
+          type: "success",
+          layout: "bottomCenter",
+          theme: "metroui",
+          timeout: 3000
+        }).show();
+      }
     }
     this.setState({
       isLoggedIn,
-      isLoading: false,
+      isLoading: false
     });
   };
 
   login = () => {
     window.FB.login(
       function(response) {
-        this.statusChangeCallback(response);
+        this.statusChangeCallback(response, true);
       }.bind(this),
       {
         scope: "manage_pages,pages_show_list,publish_pages,public_profile",

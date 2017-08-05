@@ -3,10 +3,6 @@ import PostList from './PostList';
 import WritePostForm from './WritePostForm';
 
 class PostsContainer extends Component {
-  constructor(props) {
-    super(props);
-  }
-
   render() {
     return (
       <div className="posts-container">

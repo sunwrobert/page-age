@@ -2,9 +2,7 @@ import React, { Component } from "react";
 import Page from "./Page";
 
 class PageList extends Component {
-  constructor(props) {
-    super(props);
-  }
+
   render() {
     let pages = this.props.pages.map(
       function(page) {
@@ -16,7 +14,7 @@ class PageList extends Component {
             category={page.category}
           />
         );
-      }.bind(this)
+      }
     );
     return (
       <div className="page-list">

@@ -1,39 +1,39 @@
 import React, { Component } from "react";
 import { Route } from "react-router-dom";
-
+import Noty from "noty";
 import PageList from "./PageList";
 import PageDetail from "./PageDetail";
+import DataProvider from "../../api/DataProvider";
 
 class PagesContainer extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      isLoading: true,
-      isPostLoading: false,
-      pages: []
-    };
-  }
+  state = {
+    isLoading: true,
+    isPostLoading: false,
+    pages: []
+  };
 
   componentDidMount() {
     this.loadPages();
   }
 
   loadPages = () => {
-    window.FB.api(
-      "/me/accounts",
-      function(response) {
+    DataProvider.loadPages()
+      .then(pages => {
+        console.log("calling from data provider", pages);
         this.setState({
-          pages: response.data,
+          pages: pages,
           isLoading: false
         });
-        console.log(this.state.pages);
-      }.bind(this)
-    );
+      })
+      .catch(error => {
+        this.showUnexpectedError(error);
+      });
   };
 
   addPost = (pageId, post) => {
     let newPages = this.state.pages.map(page => {
       if (page.id === pageId) {
+        post.views = 0;
         let newPosts = [post].concat(page.posts);
         let newPage = Object.assign({}, page, {
           posts: newPosts
@@ -49,21 +49,16 @@ class PagesContainer extends Component {
   };
 
   loadPagePosts = pageId => {
-    window.FB.api(
-      `${pageId}/promotable_posts`,
-      { fields: "created_time,message,is_published,scheduled_publish_time" },
-      function(response) {
-        console.log(response);
+    DataProvider.loadPagePosts(pageId)
+      .then(posts => {
         let pages = this.state.pages.map(page => {
           if (page.id === pageId) {
             let newPage = Object.assign({}, page);
-            newPage.posts = response.data;
-            newPage.posts.forEach(
-              function(post) {
-                let [pageId, postId] = post.id.split("_");
-                this.loadPostViews(pageId, postId);
-              }.bind(this)
-            );
+            newPage.posts = posts;
+            newPage.posts.forEach(post => {
+              let [pageId, postId] = post.id.split("_");
+              this.loadPostViews(pageId, postId);
+            });
             return newPage;
           }
           return page;
@@ -73,24 +68,21 @@ class PagesContainer extends Component {
           pages: pages,
           isPostLoading: false
         });
-      }.bind(this)
-    );
+      })
+      .catch(error => {
+        this.showUnexpectedError(error);
+      });
   };
 
   loadPostViews = (pageId, postId) => {
-    window.FB.api(
-      `${pageId}_${postId}/insights/post_impressions_unique`,
-      function(response) {
+    DataProvider.loadPostViews(pageId, postId)
+      .then(views => {
         let newPages = this.state.pages.map(page => {
           if (page.id === pageId) {
             let newPosts = page.posts.map(post => {
               if (post.id === pageId + "_" + postId) {
-                console.log("adding views");
                 let newPost = Object.assign({}, post, {
-                  views:
-                    response.data === null || response.data.length === 0
-                      ? 0
-                      : response.data
+                  views: views === null || views.length === 0 ? 0 : views
                 });
                 return newPost;
               }
@@ -107,30 +99,56 @@ class PagesContainer extends Component {
         this.setState({
           pages: newPages
         });
-      }.bind(this)
-    );
+      })
+      .catch(error => {
+        this.showUnexpectedError(error);
+      });
   };
 
-  writePost = (pageId, message, isPublished) => {
+  writePost = (pageId, message, isPublished, scheduledTime) => {
     let accessToken = this.state.pages.find(page => page.id === pageId)
       .access_token;
-    window.FB.api(
-      `/${pageId}/feed?fields=created_time,id,message,is_published`,
-      "POST",
-      {
-        message: message,
-        published: isPublished,
-        access_token: accessToken
-      },
-      function(response) {
-        console.log(response);
-        if (response && !response.error) {
-          let post = response;
-          this.addPost(pageId, post);
-        }
-      }.bind(this)
-    );
+
+    let data = {
+      message: message,
+      published: isPublished,
+      access_token: accessToken
+    };
+
+    // Not 0 or undefined
+    if (scheduledTime) {
+      data.scheduled_publish_time = scheduledTime;
+    }
+
+    DataProvider.writePost(pageId, data)
+      .then(post => {
+        this.showPostCreatedMessage();
+        this.addPost(pageId, post);
+      })
+      .catch(error => {
+        this.showUnexpectedError(error);
+      });
   };
+
+  showPostCreatedMessage() {
+    new Noty({
+      text: "Post created successfully!",
+      type: "success",
+      layout: "bottomCenter",
+      theme: "metroui",
+      timeout: 3000
+    }).show();
+  }
+
+  showUnexpectedError(errorMessage) {
+    new Noty({
+      text: errorMessage,
+      type: "error",
+      layout: "bottomCenter",
+      theme: "metroui",
+      timeout: 3000
+    }).show();
+  }
 
   render() {
     const isLoading = this.state.isLoading;

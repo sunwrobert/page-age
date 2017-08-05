@@ -1,8 +1,5 @@
 import React, { Component } from "react";
-import PostList from "./PostList";
-import WritePostForm from "./WritePostForm";
 import PostsContainer from "./PostsContainer";
-import { Route, Redirect } from "react-router-dom";
 
 class PageDetail extends Component {
   state = {
